@@ -2,6 +2,8 @@ import re
 import os
 import mysql.connector
 
+from datetime import datetime
+
 from configs.db_config import *
 
 
@@ -28,4 +30,12 @@ regex = r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b'
 def check_username(email):
     return True
     # return re.fullmatch(regex, email)
+
+
+def validate_date(date_text):
+    try:
+        datetime.strptime(date_text, '%Y-%m-%d')
+        return True
+    except ValueError:
+        return False
 

@@ -27,8 +27,42 @@ def sign_up_view(customer_controller: CustomerController):
     return check_sign_up, message
 
 
+def top_up_account_view(customer_controller: CustomerController):
+    print(f"Your current account balance: £{customer_controller.customer_info['account_total']}")
+    print(f"Your card number: {customer_controller.customer_info['card_details']}")
+    expired_date = input("Enter card expired date: ")
+    cvv_code = input("Enter cvv code: ")
+
+    while True:
+        try:
+            amount_top_up = input("Amount to top up: £")
+            amount_top_up = float(amount_top_up)
+            customer_controller.manage_account(amount_top_up)
+            print(f"Top up done ! Your account balance is now £{customer_controller.customer_info['account_total']}")
+            print("Redirecting....")
+            time.sleep(2)
+            break
+        except Exception as e:
+            print("Please enter a valid number !!!")
+
+
 def manage_account_view(customer_controller: CustomerController):
-    pass
+    print(f"Your current account balance: £{customer_controller.customer_info['account_total']}")
+    while True:
+        print("1. Top up your account")
+        print("2. Main menu")
+
+        option = input("Select one: ")
+
+        if option not in ['1', '2']:
+            print("Please enter 1 or 2")
+        else:
+            if option == '1':
+                top_up_account_view(customer_controller)
+            else:
+                print("Redirecting ....")
+                time.sleep(2)
+            break
 
 
 def show_locations(customer_controller: CustomerController):
@@ -70,6 +104,8 @@ def rent_bike_view(customer_controller: CustomerController):
 
     if rental_status:
         print("You are renting a bike. Please return it before renting another one !!!")
+        print("Redirecting ...")
+        time.sleep(2)
     else:
         location_id = show_locations(customer_controller)
         bike_id = show_bike_by_location(customer_controller, location_id)
@@ -152,8 +188,26 @@ def report_bike_view(customer_controller: CustomerController):
     time.sleep(1)
 
 
-def write_review_view():
-    pass
+def write_review_view(customer_controller: CustomerController):
+    last_journey = customer_controller.get_latest_act()
+    if last_journey.shape[0] == 0:
+        print("You have not had any journey. Please take a bike !")
+        _ = input("Enter something to exit: ")
+    else:
+        bike_id = last_journey.iloc[0]['bikeID']
+        star = 5
+        while True:
+            star = input("Rating your last journey (Rating 1-5): ")
+            if star not in ['1', '2', '3', '4', '5']:
+                print("Please enter a number in 1-5 !!!")
+            else:
+                break
+
+        review = input("Write a review: ")
+
+        customer_controller.write_review(bike_id, star, review)
+        print("Thanks for your review !")
+        _ = input("Enter something to exit: ")
 
 
 def update_details_view(customer_controller: CustomerController):

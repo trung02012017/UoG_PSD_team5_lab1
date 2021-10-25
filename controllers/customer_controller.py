@@ -58,6 +58,7 @@ class CustomerController:
         start_time = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
         self.customer_model.add_new_customer_act(self.customer_info['customerID'], bike_id, start_time, location_id)
         self.customer_model.update_customer_rental_status(self.customer_info['customerID'], 1)
+        self.customer_info['rental_status'] = 1
 
     def get_latest_act(self):
         return self.customer_model.get_latest_act(self.customer_info['customerID'])
@@ -75,16 +76,26 @@ class CustomerController:
                     rental_status):
         self.customer_model.update_return_act(act_id, end_time, end_location, charged, paid)
         self.customer_model.update_bike_location(bike_id, end_location)
-        self.customer_model.update_customer_account(self.customer_info['customerID'], remaining_account, rental_status)
 
-    def manage_account(self):
-        pass
+        self.customer_info['totalPaid'] += charged
+        self.customer_model.update_customer_account(self.customer_info['customerID'],
+                                                    remaining_account,
+                                                    rental_status,
+                                                    self.customer_info['totalPaid'])
+
+    def manage_account(self, amount):
+        self.customer_info['account_total'] += amount
+        self.customer_model.update_account_total(self.customer_info['customerID'], self.customer_info['account_total'])
 
     def report_bike(self, bike_id, bike_cond):
         self.customer_model.update_bike_status(bike_id, bike_cond)
 
-    def write_review(self):
-        pass
+    def write_review(self, bike_id, star, review):
+        self.customer_model.add_customer_review(self.customer_info['customerID'],
+                                                bike_id,
+                                                star,
+                                                review,
+                                                datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
 
     def update_details(self, field_name, value):
         self.customer_model.update_details(self.customer_info['customerID'], field_name, value)

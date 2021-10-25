@@ -80,9 +80,10 @@ class CustomerModel:
         cursor.execute(query)
         self.conn_db.commit()
 
-    def update_customer_account(self, customer_id, remaining_account, rental_status):
+    def update_customer_account(self, customer_id, remaining_account, rental_status, total_paid):
         query = f"update customer " \
                 f"set account_total = {remaining_account}, " \
+                f"totalPaid = {total_paid}, " \
                 f"rental_status = {rental_status} " \
                 f"where customerID = {customer_id}"
 
@@ -112,6 +113,25 @@ class CustomerModel:
         query = f"update customer " \
                 f"set {field_name} = '{value}' " \
                 f"where customerID = {customer_id}"
+
+        cursor = self.conn_db.cursor()
+        cursor.execute(query)
+        self.conn_db.commit()
+
+    def update_account_total(self, customer_id, amount):
+        query = f"update customer " \
+                f"set account_total = {amount} " \
+                f"where customerID = {customer_id}"
+
+        cursor = self.conn_db.cursor()
+        cursor.execute(query)
+        self.conn_db.commit()
+
+    def add_customer_review(self, customer_id, bike_id, star, review, review_time):
+        query = f"insert into reviews " \
+                f"(customerID, bikeID, starRating, comments, reviewTime) " \
+                f"values " \
+                f"({customer_id}, {bike_id}, {star}, '{review}', '{review_time}')"
 
         cursor = self.conn_db.cursor()
         cursor.execute(query)
