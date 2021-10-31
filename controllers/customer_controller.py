@@ -63,8 +63,14 @@ class CustomerController:
     def get_latest_act(self):
         return self.customer_model.get_latest_act(self.customer_info['customerID'])
 
+    def get_latest_act_done(self):
+        return self.customer_model.get_latest_act_done(self.customer_info['customerID'])
+
     def get_account_total(self):
         return self.customer_model.get_account_total(self.customer_info['customerID'])
+
+    def get_activity_return(self):
+        return
 
     def return_bike(self, act_id,
                     bike_id,
@@ -74,6 +80,7 @@ class CustomerController:
                     remaining_account,
                     paid,
                     rental_status):
+
         self.customer_model.update_return_act(act_id, end_time, end_location, charged, paid)
         self.customer_model.update_bike_location(bike_id, end_location)
 
@@ -82,6 +89,7 @@ class CustomerController:
                                                     remaining_account,
                                                     rental_status,
                                                     self.customer_info['totalPaid'])
+        self.customer_info['account_total'] -= charged
 
     def manage_account(self, amount):
         self.customer_info['account_total'] += amount

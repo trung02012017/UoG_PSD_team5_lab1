@@ -1,4 +1,3 @@
-import time
 import math
 from datetime import datetime
 
@@ -39,8 +38,7 @@ def top_up_account_view(customer_controller: CustomerController):
             amount_top_up = float(amount_top_up)
             customer_controller.manage_account(amount_top_up)
             print(f"Top up done ! Your account balance is now £{customer_controller.customer_info['account_total']}")
-            print("Redirecting....")
-            time.sleep(2)
+            input("Press something to redirect to main menu ...")
             break
         except Exception as e:
             print("Please enter a valid number !!!")
@@ -60,8 +58,7 @@ def manage_account_view(customer_controller: CustomerController):
             if option == '1':
                 top_up_account_view(customer_controller)
             else:
-                print("Redirecting ....")
-                time.sleep(2)
+                input("Press something to redirect to main menu ...")
             break
 
 
@@ -104,15 +101,13 @@ def rent_bike_view(customer_controller: CustomerController):
 
     if rental_status:
         print("You are renting a bike. Please return it before renting another one !!!")
-        print("Redirecting ...")
-        time.sleep(2)
     else:
         location_id = show_locations(customer_controller)
         bike_id = show_bike_by_location(customer_controller, location_id)
 
         customer_controller.rent_bike(bike_id, location_id)
         print("Rent done ! Thank you")
-        time.sleep(1)
+    input("Press something to redirect to main menu ...")
 
 
 def pay_charged_view(current_amount, time_duration_in_h, charged):
@@ -124,50 +119,53 @@ def pay_charged_view(current_amount, time_duration_in_h, charged):
 
     _ = input("Enter somthing to make payment: ")
 
-    print("Making payment ...")
-    time.sleep(0.5)
+    print("Making payment done !")
+    input("Press something to redirect to main menu ...")
 
 
 def return_bike_view(customer_controller: CustomerController):
-    location_id = show_locations(customer_controller)
     latest_act = customer_controller.get_latest_act()
+    if latest_act.shape[0] > 0:
+        location_id = show_locations(customer_controller)
 
-    act_id = latest_act.iloc[0]['ActID']
-    bike_id = latest_act.iloc[0]['bikeID']
-    start_time = latest_act.iloc[0]['startTime']
-    end_time = datetime.now()
+        act_id = latest_act.iloc[0]['ActID']
+        bike_id = latest_act.iloc[0]['bikeID']
+        start_time = latest_act.iloc[0]['startTime']
+        end_time = datetime.now()
 
-    time_duration_in_s = (end_time - start_time).total_seconds()
-    time_duration_in_h = time_duration_in_s / 3600
-    charged = pay_per_hour * int(math.ceil(time_duration_in_h))
+        time_duration_in_s = (end_time - start_time).total_seconds()
+        time_duration_in_h = time_duration_in_s / 3600
+        charged = pay_per_hour * int(math.ceil(time_duration_in_h))
 
-    current_amount = customer_controller.get_account_total()
+        current_amount = customer_controller.get_account_total()
 
-    pay_charged_view(current_amount, time_duration_in_h, charged)
+        pay_charged_view(current_amount, time_duration_in_h, charged)
 
-    check_account = current_amount >= charged
-    if check_account:
-        customer_controller.return_bike(act_id,
-                                        bike_id,
-                                        end_time,
-                                        location_id,
-                                        charged,
-                                        current_amount - charged,
-                                        1,
-                                        0)
+        check_account = current_amount >= charged
+        if check_account:
+            customer_controller.return_bike(act_id,
+                                            bike_id,
+                                            end_time,
+                                            location_id,
+                                            charged,
+                                            current_amount - charged,
+                                            1,
+                                            0)
+            print("Return done completely !")
+        else:
+            print("Your current account is too low. Please top up your account")
     else:
-        print("Your current account is too low. Please top up your account")
-        print("Redirecting to the main menu ...")
-        time.sleep(2)
+        print("You are not renting a bike !!!")
+    input("Enter something to redirect to the main menu ...")
 
 
 def report_bike_view(customer_controller: CustomerController):
-    latest_act = customer_controller.get_latest_act()
+    latest_act = customer_controller.get_latest_act_done()
     bike_id = latest_act.iloc[0]['bikeID']
 
-    print(f"Your latest journey is with bike id: {bike_id}. How is the bike now ?")
-    print("1. Good")
-    print("2. Broken")
+    print(f"Your latest journey is with bike id: {bike_id}. Is the bike now broken ?")
+    print("1. No")
+    print("2. Yes")
 
     while True:
         bike_cond_input = input("Select one: ")
@@ -184,8 +182,7 @@ def report_bike_view(customer_controller: CustomerController):
 
     print("Updating bike status ...")
     customer_controller.report_bike(bike_id, bike_cond)
-    print("Redirecting to main menu ...")
-    time.sleep(1)
+    input("Press something to redirect to main menu ...")
 
 
 def write_review_view(customer_controller: CustomerController):
@@ -246,8 +243,8 @@ def update_details_view(customer_controller: CustomerController):
                     else:
                         print("confirm card number failed !!!")
                         continue
-            print("Information updated. Redirecting ...")
-            time.sleep(1)
+            print("Information updated")
+            input("Press something to redirect to main menu ...")
             break
 
 
@@ -312,7 +309,6 @@ class CustomerView(View):
 
             try:
                 option_func = self.option_mapping[option]["option_func"]
-                print(option_func.__name__)
                 option_func(self.customer_controller)
                 if option_func.__name__ == "log_out_view":
                     break

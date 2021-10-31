@@ -17,7 +17,7 @@ class OperatorModel:
         return pd.read_sql(query, self.conn_db)
 
     def get_bike_rental_status(self, bike_id):
-        query = f"select * from customeractivity where bikeID = {bike_id} and endLocation = null"
+        query = f"select * from customeractivity where bikeID = {bike_id} and endLocation is null"
         df = pd.read_sql(query, self.conn_db)
         if df.shape[0] == 0:
             return 'Available'
@@ -43,3 +43,8 @@ class OperatorModel:
         cursor = self.conn_db.cursor()
         cursor.execute(query)
         self.conn_db.commit()
+
+    def get_postcode_by_location_id(self, location_id):
+        query = f"select postCode from location where locationID = {location_id}"
+        df = pd.read_sql(query, self.conn_db)
+        return df.iloc[0]['postCode']

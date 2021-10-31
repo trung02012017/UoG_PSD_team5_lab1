@@ -65,13 +65,18 @@ class ManagerController:
 
         df_month = df.loc[df['Month'] == month_select]
         axis = df_month.groupby(['customerID']).size().reset_index(name='Freq').sort_values('Freq', ascending=False)
-        x_axis = axis['customerID']
+
+        usernames = []
+        for i, row in axis.iterrows():
+            usernames.append(self.manager_model.get_username_by_id(row['customerID']))
+        axis['username'] = usernames
+        x_axis = axis['username']
         y_axis = axis['Freq']
-        exp_val = list(np.zeros(len(x_axis)))
-        exp_val[:3] = [0.2, 0.15, 0.13]
+        # exp_val = list(np.zeros(len(x_axis)))
+        # exp_val[:3] = [0.2, 0.15, 0.13]
 
         plt.title("Proportion of Monthly Rental by User: " + month_name[month_select])
-        plt.pie(y_axis, labels=x_axis, explode=exp_val, shadow=True, autopct='%1.1f%%', startangle=300)
+        plt.pie(y_axis, labels=x_axis, explode=None, shadow=True, autopct='%1.1f%%', startangle=300)
         plt.axis('equal')
         plt.show()
 
@@ -99,11 +104,12 @@ class ManagerController:
         month_name = {1: 'January', 2: 'February', 3: 'March', 4: 'April', 5: 'May',
                       6: 'June', 7: 'July', 8: 'August', 9: 'September', 10: 'October', 11: 'November', 12: 'December'}
 
-        df_paid = df.loc[df['paid'] == 1]
+        df['month'] = pd.DatetimeIndex(df['endTime']).month
+        df_paid = df.loc[(df['paid'] == 1) & (df['month'] == float(month_select))]
         day_group_paid = df_paid.groupby(['Day'])['charged'].sum().reset_index()
         axis_paid = pd.merge(day_name, day_group_paid, on="Day", how="outer").fillna(0)
 
-        df_unpaid = df.loc[df['paid'] == 0]
+        df_unpaid = df.loc[df['paid'] == 0 & (df['month'] == float(month_select))]
         day_group_unpaid = df_unpaid.groupby(['Day'])['charged'].sum().reset_index()
         axis_unpaid = pd.merge(day_name, day_group_unpaid, on="Day", how="outer").fillna(0)
 

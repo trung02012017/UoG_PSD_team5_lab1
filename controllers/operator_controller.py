@@ -12,6 +12,9 @@ class OperatorController:
     def track_bike(self):
         return self.operator_model.get_all_bikes_info()
 
+    def get_postcode_by_location_id(self, location_id):
+        return self.operator_model.get_postcode_by_location_id(location_id)
+
     def get_bike_rental_status(self, bike_id):
         check_rental = self.operator_model.get_bike_rental_status(bike_id)
         return check_rental

@@ -43,7 +43,7 @@ def track_bike_view(operator_controller: OperatorController):
         check_rental_status = operator_controller.get_bike_rental_status(bike_id)
 
         if check_rental_status == 'Available':
-            bike_locations.append(row['locationID'])
+            bike_locations.append(operator_controller.get_postcode_by_location_id(row['locationID']))
         else:
             bike_locations.append('Currently rent')
 
@@ -53,8 +53,6 @@ def track_bike_view(operator_controller: OperatorController):
         print(bikes_info)
 
     _ = input('Press something to redirect to main menu: ')
-    print("redirecting....")
-    time.sleep(1)
 
 
 def repair_bike_view(operator_controller: OperatorController):
@@ -62,8 +60,6 @@ def repair_bike_view(operator_controller: OperatorController):
     if broken_bikes.shape[0] == 0:
         print("All bikes are in a good condition")
         _ = input("Enter something to redirect to the main menu: ")
-        print("Redirecting ...")
-        time.sleep(1)
     else:
         while True:
             print("List of broken bikes:")
@@ -81,6 +77,7 @@ def repair_bike_view(operator_controller: OperatorController):
                 time.sleep(1)
                 print("Repair done !")
                 break
+        input("Press something to redirect to main menu ...")
 
 
 def move_bike_view(operator_controller: OperatorController):
@@ -118,6 +115,7 @@ def move_bike_view(operator_controller: OperatorController):
                 time.sleep(1)
                 print("Done moving !")
             break
+    input("Press something to redirect to main menu ...")
 
 
 def log_out_view(operator_controller: OperatorController = None):
@@ -173,7 +171,6 @@ class OperatorView(View):
 
             try:
                 option_func = self.option_mapping[option]["option_func"]
-                print(option_func.__name__)
                 option_func(self.operator_controller)
                 if option_func.__name__ == "log_out_view":
                     time.sleep(1)

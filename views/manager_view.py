@@ -53,18 +53,18 @@ def usage_daily_line(manager_controller: ManagerController):
 
 def user_daily_pie(manager_controller: ManagerController):
     while True:
-        try:
-            month_select = int(input("Select Month: "))
-            if month_select not in range(1, 13, 1):
-                print("Month must be a number from 1-12 !!!")
-                continue
-            else:
-                manager_controller.show_user_daily_pie(month_select)
-                break
-        except Exception as e:
-            print(e)
+        # try:
+        month_select = int(input("Select Month: "))
+        if month_select not in range(1, 13, 1):
             print("Month must be a number from 1-12 !!!")
             continue
+        else:
+            manager_controller.show_user_daily_pie(month_select)
+            break
+        # except Exception as e:
+        #     print(e)
+        #     print("Month must be a number from 1-12 !!!")
+        #     continue
 
 
 def revenue_daily_line(manager_controller: ManagerController):
@@ -196,10 +196,10 @@ class ManagerView(View):
 
             try:
                 option_func = self.option_mapping[option]["option_func"]
-                print(option_func.__name__)
                 option_func(self.manager_controller)
                 if option_func.__name__ == "log_out_view":
                     break
                 self.redirect()
-            except KeyError:
+            except KeyError as e:
+                print(e)
                 print("Cannot specify your option. Please try again")

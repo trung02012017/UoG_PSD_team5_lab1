@@ -18,7 +18,7 @@ class ManagerModel:
         return pd.read_sql(query, self.conn_db)
 
     def get_revenue_customer_activity(self):
-        query = "select charged, paid, endTime from customeractivity"
+        query = "select charged, paid, endTime from customeractivity where endTime is not null"
         return pd.read_sql(query, self.conn_db)
 
     def get_rating_daily(self):
@@ -28,3 +28,8 @@ class ManagerModel:
     def get_comment_daily(self):
         query = "select comments, reviewTime from reviews"
         return pd.read_sql(query, self.conn_db)
+
+    def get_username_by_id(self, customer_id):
+        query = f"select email from customer where customerID = {customer_id}"
+        df = pd.read_sql(query, self.conn_db)
+        return df.iloc[0]['email']

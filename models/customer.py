@@ -55,6 +55,14 @@ class CustomerModel:
     def get_latest_act(self, customer_id):
         query = f"select * from customeractivity " \
                 f"where customerID = {customer_id} " \
+                f"and endTime is null " \
+                f"order by ActID desc " \
+                f"limit 1"
+        return pd.read_sql(query, self.conn_db)
+
+    def get_latest_act_done(self, customer_id):
+        query = f"select * from customeractivity " \
+                f"where customerID = {customer_id} " \
                 f"order by ActID desc " \
                 f"limit 1"
         return pd.read_sql(query, self.conn_db)
