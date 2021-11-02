@@ -69,9 +69,6 @@ class CustomerController:
     def get_account_total(self):
         return self.customer_model.get_account_total(self.customer_info['customerID'])
 
-    def get_activity_return(self):
-        return
-
     def return_bike(self, act_id,
                     bike_id,
                     end_time,

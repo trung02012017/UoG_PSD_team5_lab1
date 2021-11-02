@@ -186,7 +186,7 @@ def report_bike_view(customer_controller: CustomerController):
 
 
 def write_review_view(customer_controller: CustomerController):
-    last_journey = customer_controller.get_latest_act()
+    last_journey = customer_controller.get_latest_act_done()
     if last_journey.shape[0] == 0:
         print("You have not had any journey. Please take a bike !")
         _ = input("Enter something to exit: ")
